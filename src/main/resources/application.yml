@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/learn-batch?useSSL=false
+    username: root
+    password: example
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+  batch:
+    jdbc:
+      initialize-schema: "always"
+    job:
+      enabled: false
+
+  application:
+    name: learn-spring-batch
+  output:
+    ansi:
+      enabled: always
