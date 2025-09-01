@@ -18,6 +18,8 @@ public class EmployeeWriter implements ItemWriter<Employee> {
     @Override
     public void write(final Chunk<? extends Employee> chunk) throws Exception {
 
+        var size = chunk.size();
+        System.out.println("Size : " + size);
         // convert to JSON
         var s = objectMapper.writeValueAsString(chunk);
         System.out.println(s);

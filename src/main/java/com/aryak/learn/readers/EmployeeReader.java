@@ -17,7 +17,7 @@ public class EmployeeReader implements ItemReader<Employee> {
     private int count = 0;
 
     public EmployeeReader() throws IOException {
-        lines = Files.readAllLines(Path.of(""));
+        lines = Files.readAllLines(Path.of("/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.csv"));
     }
 
     @Override

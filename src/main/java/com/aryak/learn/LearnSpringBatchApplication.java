@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @SpringBootApplication
 public class LearnSpringBatchApplication {
 
-    private final Job job;
+    private final Job employeeJob;
     private final JobLauncher jobLauncher;
 
-    public LearnSpringBatchApplication(final Job job, final JobLauncher jobLauncher) {
-        this.job = job;
+    public LearnSpringBatchApplication(final Job employeeJob, final JobLauncher jobLauncher) {
+        this.employeeJob = employeeJob;
         this.jobLauncher = jobLauncher;
     }
 
@@ -37,7 +37,7 @@ public class LearnSpringBatchApplication {
             jobParamsBuilder.addJobParameter("dept_id", 122, Integer.class);
             jobParamsBuilder.addJobParameter("jobRun", LocalDateTime.now(), LocalDateTime.class);
 
-            jobLauncher.run(job, jobParamsBuilder.toJobParameters());
+            jobLauncher.run(employeeJob, jobParamsBuilder.toJobParameters());
 
         };
     }
