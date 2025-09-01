@@ -1,12 +1,14 @@
 package com.aryak.learn;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class LearnSpringBatchApplication {
@@ -28,7 +30,14 @@ public class LearnSpringBatchApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            jobLauncher.run(job, new JobParameters());
+
+            JobParametersBuilder jobParamsBuilder = new JobParametersBuilder();
+            // attach the key value pairs
+            jobParamsBuilder.addJobParameter("tag", "xyz_dept", String.class);
+            jobParamsBuilder.addJobParameter("dept_id", 122, Integer.class);
+            jobParamsBuilder.addJobParameter("jobRun", LocalDateTime.now(), LocalDateTime.class);
+
+            jobLauncher.run(job, jobParamsBuilder.toJobParameters());
 
         };
     }
