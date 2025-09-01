@@ -28,10 +28,6 @@ public class LearnSpringBatchApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-
-            // delay
-
-            Thread.sleep(10_000);
             jobLauncher.run(job, new JobParameters());
 
         };

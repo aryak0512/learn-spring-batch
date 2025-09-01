@@ -24,9 +24,10 @@ public class JobConfig {
     }
 
     @Bean
-    public Job firstJob(Step step1) {
+    public Job firstJob(Step step1, Step step2) {
         return new JobBuilder("job1", jobRepository)
                 .start(step1)
+                .next(step2)
                 .build();
     }
 
@@ -35,6 +36,16 @@ public class JobConfig {
         return new StepBuilder("step1", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     System.out.println("Tasklet got executed!");
+                    return RepeatStatus.FINISHED;
+                }, platformTransactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step step2() {
+        return new StepBuilder("step2", jobRepository)
+                .tasklet((contribution, chunkContext) -> {
+                    System.out.println("Step 2 got executed!");
                     return RepeatStatus.FINISHED;
                 }, platformTransactionManager)
                 .build();
