@@ -5,12 +5,16 @@ import com.aryak.learn.model.EmployeeProcessed;
 import com.aryak.learn.processors.EmployeeEmailProcessor;
 import com.aryak.learn.processors.EmployeeLocationProcessor;
 import com.aryak.learn.readers.EmployeeReader;
+import com.aryak.learn.rowmappers.EmployeeRowMapper;
 import com.aryak.learn.writers.EmployeeWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.extensions.excel.RowMapper;
+import org.springframework.batch.extensions.excel.mapping.BeanWrapperRowMapper;
+import org.springframework.batch.extensions.excel.poi.PoiItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -53,10 +57,11 @@ public class EmployeeJobConfig {
 
     @Bean
     public Step employeeStep(CompositeItemProcessor<Employee, EmployeeProcessed> compositeItemProcessor,
-                             FlatFileItemReader<Employee> employeeFlatFileItemReader) {
+                             FlatFileItemReader<Employee> employeeFlatFileItemReader,
+                             PoiItemReader<Employee> excelReader) {
         return new StepBuilder("employeeStep", jobRepository)
                 .<Employee, EmployeeProcessed>chunk(10, platformTransactionManager)
-                .reader(employeeFlatFileItemReader)
+                .reader(excelReader)
                 .processor(compositeItemProcessor)
                 .writer(employeeWriter)
                 .build();
@@ -96,5 +101,24 @@ public class EmployeeJobConfig {
 
         lineMapper.setFieldSetMapper(fieldSetMapper);
         return lineMapper;
+    }
+
+    @Bean
+    public PoiItemReader<Employee> excelReader() {
+        PoiItemReader<Employee> employeePoiItemReader = new PoiItemReader<>();
+        employeePoiItemReader.setLinesToSkip(1);
+        employeePoiItemReader.setResource(new FileSystemResource("/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.xlsx"));
+
+        // 2 different options
+
+        // 1. custom row mapper
+        RowMapper<Employee> employeeRowMapper = new EmployeeRowMapper();
+
+
+        // 2.
+        BeanWrapperRowMapper<Employee> beanWrapperRowMapper = new BeanWrapperRowMapper<>();
+        beanWrapperRowMapper.setTargetType(Employee.class);
+        employeePoiItemReader.setRowMapper(beanWrapperRowMapper);
+        return employeePoiItemReader;
     }
 }
