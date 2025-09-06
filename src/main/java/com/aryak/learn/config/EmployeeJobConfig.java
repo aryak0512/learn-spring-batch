@@ -1,6 +1,7 @@
 package com.aryak.learn.config;
 
 import com.aryak.learn.model.Employee;
+import com.aryak.learn.processors.EmployeeLocationProcessor;
 import com.aryak.learn.readers.EmployeeReader;
 import com.aryak.learn.writers.EmployeeWriter;
 import org.springframework.batch.core.Job;
@@ -18,16 +19,18 @@ public class EmployeeJobConfig {
     private final EmployeeReader employeeReader;
     private final EmployeeWriter employeeWriter;
     private final JobRepository jobRepository;
-
+    private final EmployeeLocationProcessor employeeLocationProcessor;
     private final PlatformTransactionManager platformTransactionManager;
 
     public EmployeeJobConfig(final EmployeeReader employeeReader,
                              final EmployeeWriter employeeWriter,
                              final JobRepository jobRepository,
+                             final EmployeeLocationProcessor employeeLocationProcessor,
                              final PlatformTransactionManager platformTransactionManager) {
         this.employeeReader = employeeReader;
         this.employeeWriter = employeeWriter;
         this.jobRepository = jobRepository;
+        this.employeeLocationProcessor = employeeLocationProcessor;
         this.platformTransactionManager = platformTransactionManager;
     }
 
@@ -41,9 +44,9 @@ public class EmployeeJobConfig {
     @Bean
     public Step employeeStep() {
         return new StepBuilder("employeeStep", jobRepository)
-                .<Employee, Employee>chunk(2, platformTransactionManager)
+                .<Employee, Employee>chunk(10, platformTransactionManager)
                 .reader(employeeReader)
-                // plug in the processor later
+                .processor(employeeLocationProcessor)
                 .writer(employeeWriter)
                 .build();
     }
