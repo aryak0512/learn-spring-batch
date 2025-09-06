@@ -2,10 +2,12 @@ package com.aryak.learn.writers;
 
 import com.aryak.learn.model.EmployeeProcessed;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class EmployeeWriter implements ItemWriter<EmployeeProcessed> {
 
@@ -19,10 +21,10 @@ public class EmployeeWriter implements ItemWriter<EmployeeProcessed> {
     public void write(final Chunk<? extends EmployeeProcessed> chunk) throws Exception {
 
         var size = chunk.size();
-        System.out.println("Size : " + size);
+        log.info("Size is : {}", size);
         // convert to JSON
         var s = objectMapper.writerWithDefaultPrettyPrinter().
                 writeValueAsString(chunk);
-        System.out.println(s);
+        log.info("JSON : {}", s);
     }
 }
