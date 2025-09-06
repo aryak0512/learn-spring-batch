@@ -11,10 +11,10 @@ public class EmployeeEmailProcessor implements ItemProcessor<Employee, EmployeeP
     @Override
     public EmployeeProcessed process(final Employee employee) throws Exception {
         EmployeeProcessed employeeProcessed = new EmployeeProcessed();
-        employeeProcessed.setId(employee.id());
-        employeeProcessed.setName(employee.name());
-        employeeProcessed.setLocation(employee.location());
-        employeeProcessed.setEmail(transformEmail(employee.email()));
+        employeeProcessed.setId(employee.getId());
+        employeeProcessed.setName(employee.getName());
+        employeeProcessed.setLocation(employee.getLocation());
+        employeeProcessed.setEmail(transformEmail(employee.getEmail()));
         return employeeProcessed;
     }
 

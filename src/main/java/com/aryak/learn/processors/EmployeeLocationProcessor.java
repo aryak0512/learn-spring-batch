@@ -10,7 +10,7 @@ public class EmployeeLocationProcessor implements ItemProcessor<Employee, Employ
     @Override
     public Employee process(final Employee employee) throws Exception {
 
-        if ( !employee.location().equals("Glasgow") ) {
+        if ( !employee.getLocation().equals("Glasgow") ) {
             return employee;
         }
 
