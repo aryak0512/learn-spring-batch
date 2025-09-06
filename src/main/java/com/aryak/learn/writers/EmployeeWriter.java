@@ -1,13 +1,13 @@
 package com.aryak.learn.writers;
 
-import com.aryak.learn.model.Employee;
+import com.aryak.learn.model.EmployeeProcessed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmployeeWriter implements ItemWriter<Employee> {
+public class EmployeeWriter implements ItemWriter<EmployeeProcessed> {
 
     private final ObjectMapper objectMapper;
 
@@ -16,12 +16,13 @@ public class EmployeeWriter implements ItemWriter<Employee> {
     }
 
     @Override
-    public void write(final Chunk<? extends Employee> chunk) throws Exception {
+    public void write(final Chunk<? extends EmployeeProcessed> chunk) throws Exception {
 
         var size = chunk.size();
         System.out.println("Size : " + size);
         // convert to JSON
-        var s = objectMapper.writeValueAsString(chunk);
+        var s = objectMapper.writerWithDefaultPrettyPrinter().
+                writeValueAsString(chunk);
         System.out.println(s);
     }
 }
