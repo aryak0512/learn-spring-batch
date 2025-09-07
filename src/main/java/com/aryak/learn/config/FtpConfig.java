@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
-import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
@@ -69,15 +68,6 @@ public class FtpConfig {
     @Bean
     public MessageChannel ftpChannel() {
         return new DirectChannel();
-    }
-
-
-    @ServiceActivator(inputChannel = "ftpChannel")
-    public void triggerBatchJob(File file) throws Exception {
-
-        log.info("=== FTP File Downloaded ===");
-        log.info("File name: '{}', path: '{}', size: {} bytes", file.getName(), file.getAbsolutePath(), file.length());
-
     }
 
 }

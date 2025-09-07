@@ -10,6 +10,7 @@ import com.aryak.learn.utils.S3Utils;
 import com.aryak.learn.writers.EmployeeWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -25,6 +26,7 @@ import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.batch.item.support.CompositeItemProcessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -71,7 +73,7 @@ public class EmployeeJobConfig {
                              FlatFileItemReader<Employee> s3Reader) {
         return new StepBuilder("employeeStep", jobRepository)
                 .<Employee, EmployeeProcessed>chunk(10, platformTransactionManager)
-                .reader(s3Reader)
+                .reader(employeeFlatFileItemReader)
                 .processor(compositeItemProcessor)
                 .writer(employeeWriter)
                 .build();
@@ -86,10 +88,12 @@ public class EmployeeJobConfig {
     }
 
     @Bean
-    public FlatFileItemReader<Employee> employeeFlatFileItemReader() {
+    @StepScope
+    public FlatFileItemReader<Employee> employeeFlatFileItemReader(@Value("#{jobParameters['filePath']}") String filePath) {
 
+        String defaultPath = "/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.csv";
         FlatFileItemReader<Employee> reader = new FlatFileItemReader<>();
-        reader.setResource(new FileSystemResource("/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.csv"));
+        reader.setResource(new FileSystemResource(filePath == null ? defaultPath : filePath));
         reader.setLinesToSkip(0);
 
         // specify delimiter and fields
