@@ -26,3 +26,12 @@ services:
       FTP_USER_HOME: /home/demo
     volumes:
       - ./ftp-data:/home/demo  # local folder maps to FTP user home
+
+  rabbitmq:
+    image: rabbitmq:3.13-management   # includes the web UI
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # management UI http://localhost:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

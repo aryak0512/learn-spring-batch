@@ -8,6 +8,7 @@ import com.aryak.learn.readers.EmployeeReader;
 import com.aryak.learn.rowmappers.EmployeeRowMapper;
 import com.aryak.learn.utils.S3Utils;
 import com.aryak.learn.writers.EmployeeWriter;
+import com.aryak.learn.writers.RabbitMqWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -70,12 +71,13 @@ public class EmployeeJobConfig {
                              FlatFileItemReader<Employee> employeeFlatFileItemReader,
                              PoiItemReader<Employee> excelReader,
                              JsonItemReader<Employee> jsonItemReader,
-                             FlatFileItemReader<Employee> s3Reader) {
+                             FlatFileItemReader<Employee> s3Reader,
+                             RabbitMqWriter rabbitMqWriter) {
         return new StepBuilder("employeeStep", jobRepository)
                 .<Employee, EmployeeProcessed>chunk(10, platformTransactionManager)
                 .reader(employeeFlatFileItemReader)
                 .processor(compositeItemProcessor)
-                .writer(employeeWriter)
+                .writer(rabbitMqWriter)
                 .build();
     }
 

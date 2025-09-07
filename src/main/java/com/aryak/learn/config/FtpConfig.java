@@ -3,7 +3,6 @@ package com.aryak.learn.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.channel.DirectChannel;
@@ -21,7 +20,7 @@ import java.io.File;
 import static org.apache.commons.net.ftp.FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE;
 
 @Slf4j
-@Configuration
+//@Configuration
 public class FtpConfig {
 
     @Bean

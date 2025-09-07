@@ -25,3 +25,9 @@ logging:
     org.springframework.integration: DEBUG
     org.springframework.integration.ftp: DEBUG
     org.apache.commons.net.ftp: DEBUG
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest

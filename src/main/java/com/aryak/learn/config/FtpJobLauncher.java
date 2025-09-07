@@ -5,13 +5,12 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDateTime;
 
 @Slf4j
-@Component
+//@Component
 public class FtpJobLauncher {
 
     private final JobLauncher jobLauncher;
