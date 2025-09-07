@@ -19,3 +19,9 @@ spring:
   output:
     ansi:
       enabled: always
+
+logging:
+  level:
+    org.springframework.integration: DEBUG
+    org.springframework.integration.ftp: DEBUG
+    org.apache.commons.net.ftp: DEBUG

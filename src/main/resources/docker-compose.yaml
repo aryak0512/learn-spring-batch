@@ -14,3 +14,15 @@ services:
       MYSQL_ROOT_PASSWORD: 'example'
       MYSQL_DATABASE: 'learn-batch'
       MYSQL_ROOT_HOST: '%'
+
+  ftp-server:
+    image: stilliard/pure-ftpd
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"  # passive ports
+    environment:
+      FTP_USER_NAME: demo
+      FTP_USER_PASS: demo123
+      FTP_USER_HOME: /home/demo
+    volumes:
+      - ./ftp-data:/home/demo  # local folder maps to FTP user home
