@@ -6,6 +6,7 @@ import com.aryak.learn.processors.EmployeeEmailProcessor;
 import com.aryak.learn.processors.EmployeeLocationProcessor;
 import com.aryak.learn.readers.EmployeeReader;
 import com.aryak.learn.rowmappers.EmployeeRowMapper;
+import com.aryak.learn.utils.S3Utils;
 import com.aryak.learn.writers.EmployeeWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -16,6 +17,7 @@ import org.springframework.batch.extensions.excel.RowMapper;
 import org.springframework.batch.extensions.excel.mapping.BeanWrapperRowMapper;
 import org.springframework.batch.extensions.excel.poi.PoiItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -28,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.io.IOException;
 import java.util.List;
 
 @Configuration
@@ -38,17 +41,19 @@ public class EmployeeJobConfig {
     private final JobRepository jobRepository;
     private final EmployeeLocationProcessor employeeLocationProcessor;
     private final PlatformTransactionManager platformTransactionManager;
+    private final S3Utils s3Utils;
 
     public EmployeeJobConfig(final EmployeeReader employeeReader,
                              final EmployeeWriter employeeWriter,
                              final JobRepository jobRepository,
                              final EmployeeLocationProcessor employeeLocationProcessor,
-                             final PlatformTransactionManager platformTransactionManager) {
+                             final PlatformTransactionManager platformTransactionManager, final S3Utils s3Utils) {
         this.employeeReader = employeeReader;
         this.employeeWriter = employeeWriter;
         this.jobRepository = jobRepository;
         this.employeeLocationProcessor = employeeLocationProcessor;
         this.platformTransactionManager = platformTransactionManager;
+        this.s3Utils = s3Utils;
     }
 
     @Bean
@@ -62,10 +67,11 @@ public class EmployeeJobConfig {
     public Step employeeStep(CompositeItemProcessor<Employee, EmployeeProcessed> compositeItemProcessor,
                              FlatFileItemReader<Employee> employeeFlatFileItemReader,
                              PoiItemReader<Employee> excelReader,
-                             JsonItemReader<Employee> jsonItemReader) {
+                             JsonItemReader<Employee> jsonItemReader,
+                             FlatFileItemReader<Employee> s3Reader) {
         return new StepBuilder("employeeStep", jobRepository)
                 .<Employee, EmployeeProcessed>chunk(10, platformTransactionManager)
-                .reader(jsonItemReader)
+                .reader(s3Reader)
                 .processor(compositeItemProcessor)
                 .writer(employeeWriter)
                 .build();
@@ -134,4 +140,21 @@ public class EmployeeJobConfig {
                 .resource(new FileSystemResource("/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.json"))
                 .build();
     }
+
+    //@Bean
+    public FlatFileItemReader<Employee> s3Reader() throws IOException {
+
+        var responseStream = s3Utils.getResponseStream("<your-bucket>", "<your-filename>");
+
+        // To make it restartable, copy into memory (or temp file)
+        byte[] fileBytes = responseStream.readAllBytes();
+        return new FlatFileItemReaderBuilder<Employee>()
+                .name("s3FileReader")
+                .resource(new org.springframework.core.io.ByteArrayResource(fileBytes))
+                .delimited()
+                .names("id", "name", "location", "email")
+                .targetType(Employee.class)
+                .build();
+    }
+
 }
