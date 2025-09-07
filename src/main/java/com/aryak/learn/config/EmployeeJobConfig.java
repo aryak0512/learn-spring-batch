@@ -19,6 +19,9 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonItemReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,10 +61,11 @@ public class EmployeeJobConfig {
     @Bean
     public Step employeeStep(CompositeItemProcessor<Employee, EmployeeProcessed> compositeItemProcessor,
                              FlatFileItemReader<Employee> employeeFlatFileItemReader,
-                             PoiItemReader<Employee> excelReader) {
+                             PoiItemReader<Employee> excelReader,
+                             JsonItemReader<Employee> jsonItemReader) {
         return new StepBuilder("employeeStep", jobRepository)
                 .<Employee, EmployeeProcessed>chunk(10, platformTransactionManager)
-                .reader(excelReader)
+                .reader(jsonItemReader)
                 .processor(compositeItemProcessor)
                 .writer(employeeWriter)
                 .build();
@@ -120,5 +124,14 @@ public class EmployeeJobConfig {
         beanWrapperRowMapper.setTargetType(Employee.class);
         employeePoiItemReader.setRowMapper(beanWrapperRowMapper);
         return employeePoiItemReader;
+    }
+
+    @Bean
+    public JsonItemReader<Employee> jsonItemReader() {
+        return new JsonItemReaderBuilder<Employee>()
+                .name("jsonReader")
+                .jsonObjectReader(new JacksonJsonObjectReader<>(Employee.class))
+                .resource(new FileSystemResource("/Users/aryak/Downloads/learn-spring-batch/src/main/resources/employees.json"))
+                .build();
     }
 }

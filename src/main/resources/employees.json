@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Bill",
+    "location": "Glasgow",
+    "email": "Bill@gmail.com"
+  },
+  {
+    "id": 2,
+    "name": "James",
+    "location": "Mumbai",
+    "email": "James@gmail.com"
+  },
+  {
+    "id": 3,
+    "name": "Aryak",
+    "location": "Glasgow",
+    "email": "aryak@gmail.com"
+  },
+  {
+    "id": 4,
+    "name": "Toby",
+    "location": "London",
+    "email": "Toby@gmail.com"
+  },
+  {
+    "id": 5,
+    "name": "Henry",
+    "location": "Glasgow",
+    "email": "Henryryak@gmail.com"
+  }
+]
