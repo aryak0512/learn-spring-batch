@@ -1,9 +1,9 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/learn-batch?useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: example
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://localhost:1433;databaseName=learn-batch;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: YourStrong@Passw0rd
     jpa:
       hibernate:
         ddl-auto: update
