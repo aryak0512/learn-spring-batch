@@ -1,4 +1,17 @@
+server:
+  port: 9079
 spring:
+  boot:
+    admin:
+      ui:
+        additional-links:
+          batch-jobs: http://localhost:8091/actuator/batch
+      client:
+        url: http://localhost:8090
+        enabled: true
+        auto-registration: true
+        instance:
+          name: ${spring.application.name}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3307/learn-batch?useSSL=false&allowPublicKeyRetrieval=true
@@ -31,3 +44,12 @@ logging:
     port: 5672
     username: guest
     password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"   # expose all actuator endpoints over HTTP
+  endpoint:
+    health:
+      show-details: always   # always show health details
